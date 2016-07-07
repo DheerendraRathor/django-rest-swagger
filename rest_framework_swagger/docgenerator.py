@@ -28,6 +28,9 @@ class DocumentationGenerator(object):
     # Response classes defined in docstrings
     explicit_response_types = dict()
 
+    # Models defined in docstrings
+    explicit_models = dict()
+
     def __init__(self, for_user=None):
 
         # unauthenticated user is expected to be in the form 'module.submodule.Class' if a value is present
@@ -89,6 +92,8 @@ class DocumentationGenerator(object):
 
             response_type = self._get_method_response_type(
                 doc_parser, serializer, introspector, method_introspector)
+
+            self._populate_models_from_docstring(doc_parser)
 
             operation = {
                 'method': method_introspector.get_http_method(),
@@ -188,6 +193,7 @@ class DocumentationGenerator(object):
 
         models.update(self.explicit_response_types)
         models.update(self.fields_serializers)
+        models.update(self.explicit_models)
         return models
 
     def _get_method_serializer(self, method_inspector):
@@ -243,6 +249,12 @@ class DocumentationGenerator(object):
                 return serializer_name
 
             return 'object'
+
+    def _populate_models_from_docstring(self, doc_parser):
+
+        models = doc_parser.get_models()
+        if models is not None:
+            self.explicit_models.update(models)
 
     def _get_serializer_set(self, apis):
         """

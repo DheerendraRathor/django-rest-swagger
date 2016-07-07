@@ -1050,6 +1050,12 @@ class YAMLDocstringParser(object):
         """
         return self.object.get('type', None)
 
+    def get_models(self):
+        """
+        Docstring may define swagger style models
+        """
+        return self.object.get('models', None)
+
     def get_consumes(self):
         """
         Retrieves media type supported as input
